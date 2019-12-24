@@ -1,0 +1,67 @@
+---
+layout: post
+title:  "iterm2 免密码登陆"
+date:   2019-12-24 15:32:46 +0800
+categories: linux
+---
+# iterm2 免密码登录
+
+
+#### **方式1. expect 自动交互工具 —— 将输入密码操作，写成脚本自动化（不易和rz&sz兼容性）**
+
+> 1. iTerm2=>Preferenece=>Profiles=>New一个
+>> 设置名称；
+>>Tag
+>>设置Command=>Command：expect ~/.ssh/mpwd
+> 2. vim ~/.ssh/mpwd
+>> ``` shell
+>> spawn ssh name@host
+>> expect "*assword:*"
+>> send "password\r"
+>> interact
+>> expect eof
+>> ```        
+> 3. 不兼容rz&sz的问题：可以设置Mac本地：LANG=en…（略）
+
+- 参考：<https://blog.csdn.net/qq_21413417/article/details/79609464>
+
+#### **方式2. 克隆session（首次输入密码，之后克隆session，免登陆）**
+
+> 1. 配置iterm
+>> iTerm2=>Preferenece=>Profiles=>Default=>General=>Working Directory
+>> 设置=Reuse previous session's directory
+> 2. 本机Mac配置ssh， 
+>>  vim ~/.ssh/config
+>>```shell
+>>host *
+>>ControlMaster auto
+>>ControlPath ~/.ssh/master-%r@%h:%p
+>>```
+> 3. 配合 alias 使用，效果不错
+>> ```shell
+>> alias name='ssh name@ip'
+>>```
+
+参考：<https://www.jianshu.com/p/ce5e01375976>
+
+#### **方式3. autossh工具 （Go开发的开源工具）**
+> 1. 预览
+>> ![avatar](https://raw.githubusercontent.com/islenbo/autossh/8456ea1e8cb82541018a4133227a257c70199e40/docs/images/ezgif-5-42b5117192fc.gif)
+> 2. 下载&安装
+>> ```shell
+>>brew install go
+>>git clone https://github.com/islenbo/autossh.git
+>>cd autossh
+>>sh build.sh
+>>cd release && unzip autossh-macOS-amd64_v1.1.0.zip && cd autossh-macOS-amd64_v1.1.0
+>>./install
+>>```
+>3. 配置
+>> 安转目录：~/autossh，对~/autossh/config.json进行编辑机器ip&登录名密码
+
+参考<https://juejin.im/post/5b016ae6f265da0b82631177>
+
+
+
+
+
